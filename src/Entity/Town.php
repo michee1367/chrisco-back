@@ -58,11 +58,15 @@ class Town
     #[ORM\OneToMany(mappedBy: 'town', targetEntity: TownPresbytery::class)]
     private Collection $townPresbyteries;
 
+    #[ORM\OneToMany(mappedBy: 'town', targetEntity: User::class)]
+    private Collection $members;
+
     public function __construct()
     {
         $this->parishes = new ArrayCollection();
         $this->households = new ArrayCollection();
         $this->townPresbyteries = new ArrayCollection();
+        $this->members = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,6 +181,36 @@ class Town
             // set the owning side to null (unless already changed)
             if ($townPresbytery->getTown() === $this) {
                 $townPresbytery->setTown(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getMembers(): Collection
+    {
+        return $this->members;
+    }
+
+    public function addMember(User $member): self
+    {
+        if (!$this->members->contains($member)) {
+            $this->members->add($member);
+            $member->setTown($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMember(User $member): self
+    {
+        if ($this->members->removeElement($member)) {
+            // set the owning side to null (unless already changed)
+            if ($member->getTown() === $this) {
+                $member->setTown(null);
             }
         }
 

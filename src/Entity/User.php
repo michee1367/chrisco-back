@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Asset;
 #[ORM\Table(name: '`user`')]
 #[
     ApiResource(
-        normalizationContext:["groups" => ["member:read"]],
+        normalizationContext:["groups" => ["member:read", "parish:read","town:read", "city:read", "province:read","territory:read","presbytery:read"]],
         denormalizationContext:["groups" => ["member:write"]]
     )
 ]
@@ -29,7 +29,6 @@ use Symfony\Component\Validator\Constraints as Asset;
 )]
 #[Post()]
 #[Patch()]
-
 class User
 {
     Const SEXE_MALE="M";
@@ -86,6 +85,20 @@ class User
     #[Asset\NotBlank()]
     #[Asset\NotNull()]
     private ?Parish $parish = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["member:read", "member:write"])]
+    #[Asset\NotBlank()]
+    #[Asset\NotNull()]
+    private ?string $address = null;
+
+    #[ORM\ManyToOne(inversedBy: 'members')]
+    #[Groups(["member:read", "member:write"])]
+    private ?Territory $territory = null;
+
+    #[ORM\ManyToOne(inversedBy: 'members')]
+    #[Groups(["member:read", "member:write"])]
+    private ?Town $town = null;
 
     public function getId(): ?int
     {
@@ -184,6 +197,42 @@ class User
     public function setParish(?Parish $parish): self
     {
         $this->parish = $parish;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getTerritory(): ?Territory
+    {
+        return $this->territory;
+    }
+
+    public function setTerritory(?Territory $territory): self
+    {
+        $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function getTown(): ?Town
+    {
+        return $this->town;
+    }
+
+    public function setTown(?Town $town): self
+    {
+        $this->town = $town;
 
         return $this;
     }

@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Asset;
 #[ORM\Entity(repositoryClass: ParishRepository::class)]
 #[
     ApiResource(
-        normalizationContext:["groups" => ["parish:read"]],
+        normalizationContext:["groups" => ["parish:read","presbytery:read"]],
         denormalizationContext:["groups" => ["parish:write"]]
     )
 ]

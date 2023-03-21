@@ -58,11 +58,15 @@ class Territory
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: TerritoryPresbytery::class)]
     private Collection $territoryPresbyteries;
 
+    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: User::class)]
+    private Collection $members;
+
     public function __construct()
     {
         $this->parishes = new ArrayCollection();
         $this->households = new ArrayCollection();
         $this->territoryPresbyteries = new ArrayCollection();
+        $this->members = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -179,6 +183,36 @@ class Territory
             // set the owning side to null (unless already changed)
             if ($territoryPresbytery->getTerritory() === $this) {
                 $territoryPresbytery->setTerritory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getMembers(): Collection
+    {
+        return $this->members;
+    }
+
+    public function addMember(User $member): self
+    {
+        if (!$this->members->contains($member)) {
+            $this->members->add($member);
+            $member->setTerritory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMember(User $member): self
+    {
+        if ($this->members->removeElement($member)) {
+            // set the owning side to null (unless already changed)
+            if ($member->getTerritory() === $this) {
+                $member->setTerritory(null);
             }
         }
 
